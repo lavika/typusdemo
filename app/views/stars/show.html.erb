@@ -1,0 +1,18 @@
+
+
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @star.first_name %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @star.email %>
+</p>
+
+<%= link_to 'Send Email' %>
+
+<%= link_to 'Edit', edit_star_path(@star) %> |
+<%= link_to 'Back', stars_path %>

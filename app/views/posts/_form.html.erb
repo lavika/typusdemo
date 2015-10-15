@@ -1,0 +1,121 @@
+<%= form_for(@post) do |f| %>
+  <% if @post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul>
+      <% @post.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field" id = "contentbox">
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+    <%# debugger %>
+    <%# f.autocomplete_field :title, @posts,autocomplete_title_posts_path %>
+    <%#= autocomplete_field_tag :search, params[:search], autocomplete_title_posts_path, {class: "search-query", placeholder: "United States", type: "search"} %>  
+  </div>
+  <div id='display'>
+</div>
+<div id="msgbox">
+  sadasd
+</div>
+
+  <div class="field">
+    <%= f.label :description %><br>
+    <%= f.text_area :description %>
+  </div>
+
+<div class = "field">
+ <%= f.label :rand,'Some Random Text', class: "to_edit" %><br>
+    <%= f.text_field :rand %>
+</div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+
+<% end %>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type = "text/javascript">
+
+$(document).ready(function() {
+ $("#post_title").keyup(function(){
+        $("#post_title").css("background-color", "pink");
+        var start=/@/ig; // @ Match
+        var word=/@\w+/; //@abc Match
+        var data_to_tag = $("#post_title").val();
+        var go= data_to_tag.match(start); //Content Matching @
+        var name= data_to_tag.match(word);//Content Matching @abc
+        if(!name){
+
+        }
+        else
+        {
+
+        var result = data_to_tag.substring(1);   
+        // var result = name.substring(1, name.length);
+        var datastring = 'searchword=' + result;
+        $.ajax({
+          type: "GET",
+          url: "get_users",
+          data: datastring,
+          cache: false,
+          success: function(data)
+          {
+            $("#display").show();
+            $("#msgbox").hide();
+            $( "#display" ).empty();
+            $.each( data, function(index, value)
+            {
+              $("#display").append("<a id = " + value + " class = \"clicked\">" + value + "</a><br>");
+            })
+            // $("#display").html(data).show();
+          }
+        });
+      }
+        // return word;
+    });
+    // 
+    $("#display").on("click", ".clicked", function(e){
+        console.log('apple');
+        var data = $(this).attr('id');
+        // alert(data);
+        $("#post_title").val(data);
+        // $("#post_title").prop("disabled", true);
+        $("#display").hide();
+
+    });
+    
+    
+     });
+
+//   options = {
+//     preMsgTxt: "search for topic...", // text to display when nothing has been typed
+//     menuOpacity: 94, // opacity of the menu
+//     ajaxUrl: _hostname+"/posts/auto_complete_for_table_thing", // url to your data source
+//     focus: false, // whether or not to auto-focus the textbox upon creation
+//     onEnter: function(value) { // handler for hitting the 'enter' key
+//     console.log(value);
+//     // document.setLocation("http://apps.facebook.com/researchr/topics/search?topic_search="+value); 
+//   },
+//     delayTime: 100, // amount of idle time after a keypress before making the ajax call
+//     clearOnEnter: false // whether or not to clear the text after they hit enter
+//   };
+
+// function ajaxSuggestFbml(obj, options) {
+//     this.obj = obj; // Setup the events we're listening to
+//     this.obj.addEventListener('focus', this.onfocus.bind(this))
+//     .addEventListener('blur', this.onblur.bind(this))
+//     .addEventListener('keyup', this.onkeyup.bind(this))
+//     .addEventListener('keydown', this.onkeydown.bind(this))
+//     .addEventListener('keypress', this.onkeypress.bind(this));
+//   }
+
+//   var suggestr = new ajaxSuggestFbml(document.getElementById('title'),options);
+});
+  </script>

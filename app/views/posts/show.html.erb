@@ -1,0 +1,141 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @post.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @post.description %>
+</p>
+<div> 
+
+<% users = User.where(User.arel_table[:name].matches(@post.title + "%")) %>
+<% users.each do |user| %>
+<% user = user.name %>
+<% p user %>
+ <%= user.to_s %>
+ <br>
+<% end %>
+<% if @flag == '0'%>
+
+<%= @object.title %><br>
+<%= @object.favicon %><br>
+<%= @object.description %><br>
+<%= @object.images.first.src.to_s %><br>
+<%= link_to image_tag(@object.images.first.src.to_s), @object.url.to_s, target: '_blank' %>
+<!-- <img src = "<% @object.favicon %>"> -->
+<% else %>
+
+<% end %>
+</div>
+
+<h2>Comments</h2>
+<% @post.comments.each do |comment| %>
+  <p>
+    <strong>Comment:</strong>
+    <%= comment.body %>
+  </p>
+  <% if user_signed_in? && @user == current_user.id %>
+    <% if comment.reply == nil %>
+      <div id="comment_<%= comment.id %>">
+        <a href = "#" class = "comment" id = "<%= comment.id %>"> Reply</a>
+      </div>
+    <% else %>
+    <div id="comment_<%= comment.id %>">
+    <%= comment.reply %>
+    <a href = "" id = "<%= comment.id %>" class = "delete"> Delete</a>
+    </div>
+    <%end %>
+  <% end %>
+<% end %>
+
+<% if user_signed_in? %>
+<h2>Add a comment:</h2>
+<%= form_for([@post, @post.comments.build]) do |f| %>
+  <p>
+    <%= f.label :commenter %><br>
+    <%= f.text_field :commenter, :value => current_user.name %>
+  </p>
+  <p>
+    <%= f.label :body %><br>
+    <%= f.text_area :body %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+
+<td><%= link_to 'Share with Facebook', '', :onclick => 'myFunction()' %></td>
+<td><%= link_to 'Share with Facebook', '', :onclick => 'myFunction1()' %></td>
+<% end %>
+<%= link_to 'Edit', edit_post_path(@post) %> |
+<%= link_to 'Back', posts_path %>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type = "text/javascript">
+$(document).ready(function(){
+$("#comment_commentor").val()
+
+  $("body").on("click",".comment" ,function(){
+    var id = $(this).attr('id');
+    $(this).parent().html("<input class = \"actual\" id =\"" + id + "\">");
+  });
+
+  $("body").on("blur", ".actual", function(){
+     var rep = $(".actual").val();
+     var id = $(this).attr('id');
+    var datastring = "reply=" +rep+"&id=" +id;
+    // var datastring = '"reply=" + rep'.getJSON();
+    $.ajax({
+      type: "GET",
+      url: "add_reply",
+      data: datastring,
+      cache: false,
+      dataType: 'json',
+      success: function(data)
+      {
+
+        $(".actual").parent().html(data + "<a href = \"\" id = \"" +id +"\" class = \"delete\"> Delete</a>");
+      }
+    });
+    
+  });
+
+  $("body").on("click", ".delete", function(e){
+    e.preventDefault();
+    var id = $(this).attr('id');
+    var datastring = "id=" +id;
+    $.ajax({
+      type: "GET",
+      url: "delete_reply",
+      data: datastring,
+      cache: false,
+      dataType: 'json',
+      success: function(data)
+      {
+        $('#'+id).parent('div#comment_'+id).html("<a href = \"\" class = \"comment\"> Reply</a>");
+      }
+    });
+  
+  });
+
+});
+function myFunction()
+{
+  var url = document.URL;
+  var mod = "http://www.facebook.com/sharer.php?u=URL" + url;
+  window.open(mod);
+}
+function myFunction1()
+{
+  var url = document.URL;
+  // var mod = "http://www.facebook.com/sharer.php?u=URL" + url;
+  var mod = "http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.cybrilla.com/blog/"
+  window.open(mod);
+}
+
+</script>
+
+

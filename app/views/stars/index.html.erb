@@ -1,0 +1,24 @@
+<h1>Listing Stars</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Category</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @stars.each do |star| %>
+      <tr>
+        <td><%= star.id %></td>
+        <td><%= star.category %></td>
+        <td><%= star.first_name %></td>
+        <td><%= star.last_name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'New Star', new_star_path %>
